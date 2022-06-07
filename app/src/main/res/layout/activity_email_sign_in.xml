@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    tools:context=".activities.EmailSignInActivity">
+
+    <!--Up 버튼을 배치하기 위해 툴바가 하나 필요-->
+    <!--디바이스마다 적절한 툴바 높이가 정해져 있음. 폰에서는 56dp. 태블릿은 또 다르고..
+    알아서 해주는 게 ?attr/actionBarSize-->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"/>
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/app_logo"
+        android:layout_marginTop="40dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이메일로 사용자 계정 만들기"
+        android:textColor="#6789ca"
+        android:padding="8dp"
+        android:textStyle="bold"/>
+    <EditText
+        android:id="@+id/et_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_all_round_square"
+        android:hint="이메일"
+        android:padding="16dp"
+        android:textSize="14sp"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="40dp"
+        android:layout_marginHorizontal="64dp"/>
+    <EditText
+        android:id="@+id/et_pw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_all_round_square"
+        android:hint="비밀번호"
+        android:padding="16dp"
+        android:textSize="14sp"
+        android:inputType="textPassword"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="64dp"
+        android:imeOptions="actionDone"/>
+    <!--EditText가 연달아 있으면 키패드에 다음으로 가는 버튼이 나오게 되는데 마지막 건 Done으로 바꿔준다.-->
+
+    <Button
+        android:id="@+id/btn_signin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign In"
+        android:textAllCaps="false"
+        android:backgroundTint="#6789ca"
+        android:padding="16dp"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="20dp"/>
+
+</LinearLayout>

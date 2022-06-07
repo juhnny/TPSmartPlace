@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- layer-list : 여러 레이어를 쌓아서 한 장의 그림으로 만들어주는 기능 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/white"/>
+    <item android:drawable="@drawable/app_logo"
+        android:width="250dp"
+        android:height="250dp"
+        android:gravity="center"/>
+    <item
+        android:drawable="@drawable/ic_location_on_24"
+        android:width="40dp"
+        android:height="40dp"
+        android:top="10dp"
+        android:gravity="center_horizontal" />
+</layer-list>

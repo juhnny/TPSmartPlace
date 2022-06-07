@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1005468130455",
+    "project_id": "tpsmartplace",
+    "storage_bucket": "tpsmartplace.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005468130455:android:e2ec64a5ae1dacf076ddd2",
+        "android_client_info": {
+          "package_name": "com.juhnny.tpsmartplace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005468130455-3q9o8a4eckh5sb0o7hksbatem9lalijr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDz89wcPKY0hNWTQGP13sj3F0yjhdcp80k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005468130455-3q9o8a4eckh5sb0o7hksbatem9lalijr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
