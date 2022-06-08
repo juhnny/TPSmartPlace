@@ -51,8 +51,14 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:30.1.0')
     implementation 'com.google.firebase:firebase-firestore'
 
-    //카카오 SDK
-    implementation "com.kakao.sdk:v2-user:2.10.0" // 카카오 로그인
+    //카카오 로그인 SDK
+    implementation "com.kakao.sdk:v2-user:2.10.0"
+
+    //구글 로그인
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+
+    //네이버 네아로 SDK
+    implementation 'com.navercorp.nid:oauth:5.1.0' // jdk 11
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

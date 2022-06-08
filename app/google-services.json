@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1005468130455-bqp4dvtkckgfdul7i780cho1n3vrpd94.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.juhnny.tpsmartplace",
+            "certificate_hash": "2522006e58bf54c73ad0c318f8a779949538ebda"
+          }
+        },
+        {
           "client_id": "1005468130455-3q9o8a4eckh5sb0o7hksbatem9lalijr.apps.googleusercontent.com",
           "client_type": 3
         }

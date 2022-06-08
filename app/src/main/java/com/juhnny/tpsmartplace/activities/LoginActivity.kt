@@ -7,6 +7,14 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.juhnny.tpsmartplace.G
 import com.juhnny.tpsmartplace.databinding.ActivityLoginBinding
 import com.juhnny.tpsmartplace.model.UserAccount
@@ -14,6 +22,8 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.OAuthLoginCallback
 
 class LoginActivity : AppCompatActivity() {
 
@@ -52,6 +62,8 @@ class LoginActivity : AppCompatActivity() {
     //이메일 로그인 시에는 어차피 document(각 유저 정보)가 만들어질 때 이름(식별자)이 Firebase에서 랜덤한 유니크값(아마도 해시값)으로 지정되므로
     //(원한다면 사용자 정의로 규칙을 만들어서 이름을 지정해줘도 된다.)
     //이메일 로그인 시에는 document 이름을 식별자로 사용하는 것으로 한다.
+
+    //
 
     fun loginWithKakao(){
         //개발자 문서를 참고해서 진행
@@ -99,10 +111,86 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun loginWithGoogle(){
+        //Google login과 Firebase Auth는 기본적으로 별개의 서비스. 라이브러리도 별개다.
+        //Firebase Auth에서 지원하는 다른 간편로그인 서비스도 여러개 쓸 때는 Firebase Auth를 쓰는 게 편리하겠지만
+        //Google login만 할 거라면 굳이 Firebase auth 라이브러리를 사용하지 않아도 된다.
+        //Firebase auth 개발문서를 참고하면 Firebase auth를 써서 구현하도록 돼있으니
+        //Google login 개발문서를 참고해서 만들도록 하자. 구현 방법도 더 간단하다.
+        //단 Google 프로젝트와 Firebase 프로젝트는 연동이 돼있어서
+        //Firebase Auth에서 구글 로그인을 사용하겠다고 하면 구글 플레이 콘솔에도 프로젝트가 만들어지고
+        //Firebase Auth에서 SHA-1값을 입력하면 구글 플레이 콘솔에도 사용자 인증 정보가 자동으로 입력된다.
+        //Firebase Auth에서 SHA-1 값을 입력한 뒤 google-service.json 파일도 바꿔준 뒤 구글 로그인 문서를 참고해 작성하면 아래와 같다.
 
+        //옵션 객체는 아래 GoogleSign 객체를 만들기 위해 미리 옵션을 설정하는 용도
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN) //이렇게만 쓰면 id밖에 못 가져온다. 이메일도 요청해야 한다.
+            .requestEmail()
+            .build()
+
+        //구글 로그인 화면 액티비티를 실행시켜주는 Intent 객체 얻어오기
+        //액티비티를 열려면 Intent에 열려는 액티비티 이름을 쓰거나 알맞는 옵션을 써줘야 하는데..
+        //액티비티 이름이라던가 Intent. 눌렀을 때 나오는 옵션을 뭘 써주면 구글 로그인 액티비티가 열리는지 구글은 노출이 안돼있다.
+        //그래서 구글이 만들어주는 Intent를 써야 한다.
+        val intent = GoogleSignIn.getClient(this, gso).signInIntent
+        resultLauncher.launch(intent)
     }
 
-    fun loginWithNaver(){
+    val resultLauncher:ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), object : ActivityResultCallback<ActivityResult>{
+        override fun onActivityResult(result: ActivityResult?) {
+            //로그인이 잘 됐는지 검사하고 그 다음 작업을 해주자.
+            if(result?.resultCode == RESULT_CANCELED) return
 
+            //로그인 결과를 가져온 intent 객체 소환
+            //Activity 간에 데이터를 주고 받을 땐 줄 때도 받을 때도 무조건! Intent가 필요하다.
+            val intent = result?.data
+            //Intent로부터 .getBundleExtra("???") 작업을 해줘야 하는데 그 키값을 모르네?
+            //Intent로부터 구글계정 정보를 가져오는 작업 객체 생성
+            val account:GoogleSignInAccount = GoogleSignIn.getSignedInAccountFromIntent(intent).result //add 리스너를 할 수도 있고 result를 달라고 할 수도 있다. 알아서 동기식으로 가져온다. 다음 명령들은 대기상태로 기다림
+            //계정 정보 저장
+            val id = account.id.toString()
+            val email = account.email ?: "" //null 처리
+            Log.i("GoogleSignInAccount", "$id / $email")
+            G.userAccount = UserAccount(id, email)
+
+            //Main 화면으로 이동
+            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            finish()
+
+        }
+    })
+
+    fun loginWithNaver(){
+        //네이버 아이디로 로그인하기(네아로SDK) - 사용자 정보를 REST API로 받아오는 방식
+        //Retrofit 네트워크 라이브러리를 사용하기
+
+        //네이버 개발자 센터의 가이드 문서 참고
+        //nid oauth sdk 추가
+
+        //초기화
+        NaverIdLoginSDK.initialize(this, "suyX4kJ722_ArMzzqw9I", "8D0kBNHHi8", "빠른 지도찾기")
+
+        //authenticate() 메서드를 이용한 로그인
+        //로그인 정보를 받는 것이 아니라 로그인 정보를 받기 위한 REST API의 접근 키(여기서는 토큰)을 발급받는 것임
+        //보안 문제나 트래픽 문제 때문에 이런 방식을 택한 듯. 토큰은 (아마도) 30분마다 만료
+        //이 토큰으로 네트워크 API를 통해 JSON 데이터를 받아 정보를 얻어오는 것
+        NaverIdLoginSDK.authenticate(this, object : OAuthLoginCallback{
+            override fun onError(errorCode: Int, message: String) {
+                Toast.makeText(this@LoginActivity, "Server error : $message", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onFailure(httpStatus: Int, message: String) {
+                Toast.makeText(this@LoginActivity, "로그인 실패 : $message", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onSuccess() {
+                Toast.makeText(this@LoginActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
+
+                //사용자 정보를 가져오는 REST API의 접속토큰 받아오기
+                val accessToken: String? = NaverIdLoginSDK.getAccessToken()
+                Toast.makeText(this@LoginActivity, "Token: $accessToken", Toast.LENGTH_SHORT).show()
+
+                //사용자 정보 가져오는 네트워크 작업 - Retrofit2 이용
+
+            }
+        })
     }
 }
