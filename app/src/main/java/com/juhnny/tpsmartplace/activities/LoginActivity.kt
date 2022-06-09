@@ -3,27 +3,31 @@ package com.juhnny.tpsmartplace.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.juhnny.tpsmartplace.G
 import com.juhnny.tpsmartplace.databinding.ActivityLoginBinding
+import com.juhnny.tpsmartplace.model.NaverUserInfoResponse
 import com.juhnny.tpsmartplace.model.UserAccount
+import com.juhnny.tpsmartplace.network.RetrofitService
 import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class LoginActivity : AppCompatActivity() {
 
@@ -63,7 +67,10 @@ class LoginActivity : AppCompatActivity() {
     //(원한다면 사용자 정의로 규칙을 만들어서 이름을 지정해줘도 된다.)
     //이메일 로그인 시에는 document 이름을 식별자로 사용하는 것으로 한다.
 
-    //
+    //로그인 정보를 가져오는 각각 다른 방법
+    //Kakao는 sdk 안에 있는 me 메소드를 사용
+    //Google은 액티비티를 열고 Intent를 이용해 가져옴
+    //Naver는 REST 방식으로
 
     fun loginWithKakao(){
         //개발자 문서를 참고해서 진행
@@ -154,7 +161,6 @@ class LoginActivity : AppCompatActivity() {
             //Main 화면으로 이동
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             finish()
-
         }
     })
 
@@ -189,7 +195,32 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this@LoginActivity, "Token: $accessToken", Toast.LENGTH_SHORT).show()
 
                 //사용자 정보 가져오는 네트워크 작업 - Retrofit2 이용
+                //네이버 회원 프로필 조회 API (https://developers.naver.com/docs/login/profile/profile.md#%EB%84%A4%EC%9D%B4%EB%B2%84-%ED%9A%8C%EC%9B%90-%ED%94%84%EB%A1%9C%ED%95%84-%EC%A1%B0%ED%9A%8C-api-%EB%AA%85%EC%84%B8)
+                val retrofit = Retrofit.Builder().baseUrl("https://openapi.naver.com")
+                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+                val retrofitInterface = retrofit.create(RetrofitService::class.java).getNidUserInfo("Bearer $accessToken")
+                    .enqueue(object : Callback<NaverUserInfoResponse>{
+                        override fun onResponse(
+                            call: Call<NaverUserInfoResponse>,
+                            response: Response<NaverUserInfoResponse>
+                        ) {
+                            val userInfo:NaverUserInfoResponse? = response.body()
+                            val id = userInfo?.response?.id ?: ""
+                            val email = userInfo?.response?.email ?: ""
+                            Toast.makeText(this@LoginActivity, "email : $email", Toast.LENGTH_SHORT).show()
+                            G.userAccount = UserAccount(id, email)
+                            //main 화면으로 이동
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            finish()
+                        }
 
+                        override fun onFailure(call: Call<NaverUserInfoResponse>, t: Throwable) {
+                            Toast.makeText(this@LoginActivity, "회원정보 읽기 실패 : ${t.message}", Toast.LENGTH_SHORT).show()
+                        }
+
+                    })
             }
         })
     }

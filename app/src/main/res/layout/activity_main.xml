@@ -1,18 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- toolbar 권장 높이는 폰 56dp, 태블릿 80dp이지만 디바이스에 정해진 값을 쓰게 하자-->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_location_on_24"
+            android:layout_marginRight="8dp"/>
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_all_round_square"
+            android:inputType="text"
+            android:hint="검색어 입력"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:textColor="@color/black"
+            android:padding="8dp"
+            android:layout_marginVertical="8dp"
+            android:imeOptions="actionSearch"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <HorizontalScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/toolbar"
+        android:scrollbars="none">
+
+        <!-- 레이아웃 양이 길어서 별도 xml에서 작성 -->
+        <!--scrollview 안에서 horizontal일 때 너비는 무조건 wrap이 되어벌임,
+        vertical일 때는 높이가 무조건 wrap이 됨-->
+        <!-- include로 포함한 레이아웃에 있는 뷰들은 액티비티에서 findViewById를 쓰면 그들의 id로 곧바로 찾을 수 있지만
+        ViewBinding으로 찾으려면 include할 때 id를 줘서 그 안에 속한 걸 찾는 방식으로 활용
+        그런데 이것도 예전엔 많이 썼지만 자바 코드가 지저분해져서 잘 안쓴다고.. 그럼 지금은? -->
+        <include
+            android:id="@+id/layout_quick"
+            layout="@layout/quick_list"/>
+
+    </HorizontalScrollView>
+
+
+</RelativeLayout>
