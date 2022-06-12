@@ -48,7 +48,7 @@
         그런데 이것도 예전엔 많이 썼지만 자바 코드가 지저분해져서 잘 안쓴다고.. 그럼 지금은? -->
         <include
             android:id="@+id/layout_quick"
-            layout="@layout/quick_list"/>
+            layout="@layout/quick_list" />
 
     </HorizontalScrollView>
 

@@ -24,7 +24,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="이메일로 사용자 계정 만들기"
+        android:text="이메일로 로그인하기"
         android:textColor="#6789ca"
         android:padding="8dp"
         android:textStyle="bold"/>
