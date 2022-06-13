@@ -199,4 +199,4 @@ class MainActivity : AppCompatActivity() {
         selectedQuickSelectId = view.id
         view.setBackgroundResource(R.drawable.bg_quick_list_selected) //얘가 나중에 와야 같은 걸 재선택했을 때도 색이 지워지지 않음
     }
-}/////
+}////////
