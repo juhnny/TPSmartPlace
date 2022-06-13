@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(permissions, 111) //다이얼로그를 띄워서 허용을 받는..
         } else {
             Toast.makeText(this, "퍼미션 허용됨", Toast.LENGTH_SHORT).show()
-            //내 위치탐색 요청하는 기능 호출
+            //내 위치탐색 요청하는 기능 호출.
             requestMyLocation()
         }
     }
