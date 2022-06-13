@@ -58,7 +58,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
 
     //네이버 네아로 SDK
-    implementation 'com.navercorp.nid:oauth:5.1.0' // jdk 11
+    implementation 'com.navercorp.nid:oauth:5.1.0'
+    implementation 'com.google.android.gms:play-services-location:20.0.0'// jdk 11
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

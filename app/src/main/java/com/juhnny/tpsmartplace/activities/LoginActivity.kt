@@ -16,6 +16,7 @@ import com.juhnny.tpsmartplace.G
 import com.juhnny.tpsmartplace.databinding.ActivityLoginBinding
 import com.juhnny.tpsmartplace.model.NaverUserInfoResponse
 import com.juhnny.tpsmartplace.model.UserAccount
+import com.juhnny.tpsmartplace.network.RetrofitHelper
 import com.juhnny.tpsmartplace.network.RetrofitService
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.util.Utility
@@ -196,10 +197,7 @@ class LoginActivity : AppCompatActivity() {
 
                 //사용자 정보 가져오는 네트워크 작업 - Retrofit2 이용
                 //네이버 회원 프로필 조회 API (https://developers.naver.com/docs/login/profile/profile.md#%EB%84%A4%EC%9D%B4%EB%B2%84-%ED%9A%8C%EC%9B%90-%ED%94%84%EB%A1%9C%ED%95%84-%EC%A1%B0%ED%9A%8C-api-%EB%AA%85%EC%84%B8)
-                val retrofit = Retrofit.Builder().baseUrl("https://openapi.naver.com")
-                    .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
+                val retrofit = RetrofitHelper.getRetrofitInstance("https://openapi.naver.com")
                 val retrofitInterface = retrofit.create(RetrofitService::class.java).getNidUserInfo("Bearer $accessToken")
                     .enqueue(object : Callback<NaverUserInfoResponse>{
                         override fun onResponse(

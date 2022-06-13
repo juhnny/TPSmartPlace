@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.juhnny.tpsmartplace">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- 카카오 SDK 초기화 코드를 작성해놓은 GlobalApplication 클래스를 사용하도록 설정-->
