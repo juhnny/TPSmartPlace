@@ -89,6 +89,20 @@
     <!--        android:layout_height="match_parent"-->
     <!--        android:layout_below="@id/layout_tab"/>-->
 
-
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:indeterminateTint="@color/seoulblue"
+        android:indeterminate="true"
+        android:visibility="gone"/>
+    <!--불확정적(indeterminate) 상태 표시 모드
+    작업 진행이 언제 완료될 것인지를 정확한 수치 또는 범위 값으로 계산할 수 없는 경우
+    예를 들어 네트워크 작업.
+    프로그레스바(ProgressBar)의 기본 동작 모드이며,
+    화면에 표시될 때 특정 값을 표시하지 않고 반복적인 애니메이션을 통해 어떠한 작업이 진행 중임을 보여줍니다.
+    -->
 
 </RelativeLayout>

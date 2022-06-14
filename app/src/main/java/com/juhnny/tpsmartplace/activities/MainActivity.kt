@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(b.root)
+        b.progressCircular.visibility = View.VISIBLE
 
         //툴바를 제목줄로 설정
         setSupportActionBar(b.toolbar)
@@ -91,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, "퍼미션 허용됨", Toast.LENGTH_SHORT).show()
             //내 위치탐색 요청하는 기능 호출.
-            requestMyLocation()
+            requestMyLocation() //이게 주요 작업!
         }
     }
 
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) requestMyLocation()
+        if(requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) requestMyLocation() //이게 주요 작업!
         else Toast.makeText(this, "내 위치정보를 허용하지 않아 검색기능을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show()
     }
 
@@ -124,6 +125,8 @@ class MainActivity : AppCompatActivity() {
         //위에서 만든 LocationRequest와 아래에서 만든 LocationCallback을 사용
         providerClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
         //permission을 처리해줘야만 사용 가능. 자동완성을 쓰면 위와 같이 나옴
+        b.progressCircular.visibility = View.GONE
+
     }
 
     //위치정보 요청 결과에 대한 콜백
@@ -155,9 +158,9 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     searchPlaceResponse = response.body()
 
-                    val meta = searchPlaceResponse?.meta
-                    val documents = searchPlaceResponse?.documents
-                    Toast.makeText(this@MainActivity, "총 검색결과: ${meta?.total_count}, 한 장소: ${documents?.get(0)?.place_name}", Toast.LENGTH_SHORT).show()
+//                    val meta = searchPlaceResponse?.meta
+//                    val documents = searchPlaceResponse?.documents
+//                    Toast.makeText(this@MainActivity, "총 검색결과: ${meta?.total_count}, 한 장소: ${documents?.get(0)?.place_name}", Toast.LENGTH_SHORT).show()
 
                     //새로 검색을 하면 PlaceListFragment에서 검색결과가 보여지도록(심지어 PlaceMapFragment를 보고 있어도)
                     //기존 맵을 살려두고 adapter만 notify하는 것보다 크게 속도 퍼포먼스에서 차이나지 않을 것으로 판단
