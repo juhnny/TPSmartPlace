@@ -1,5 +1,6 @@
 package com.juhnny.tpsmartplace.network
 
+import com.juhnny.tpsmartplace.model.KakaoSearchPlaceResponse
 import com.juhnny.tpsmartplace.model.NaverUserInfoResponse
 import retrofit2.Call
 import retrofit2.http.GET
@@ -26,5 +27,5 @@ interface RetrofitService {
     @Headers("Authorization: KakaoAK 0b52e02d9e6a7899c8a5e7608b8b97e7")
     fun searchPlace(@Query("query") query: String,
                             @Query("y") latitude:String,
-                            @Query("x") longitude:String):Call<String>
+                            @Query("x") longitude:String):Call<KakaoSearchPlaceResponse>
 }

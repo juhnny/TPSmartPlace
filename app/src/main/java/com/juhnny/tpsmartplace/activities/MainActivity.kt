@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.view.get
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
 import com.google.android.material.tabs.TabLayout
 import com.juhnny.tpsmartplace.R
@@ -22,6 +23,7 @@ import com.juhnny.tpsmartplace.databinding.ActivityMainBinding
 import com.juhnny.tpsmartplace.databinding.QuickListBinding
 import com.juhnny.tpsmartplace.fragments.PlaceListFragment
 import com.juhnny.tpsmartplace.fragments.PlaceMapFragment
+import com.juhnny.tpsmartplace.model.KakaoSearchPlaceResponse
 import com.juhnny.tpsmartplace.network.RetrofitHelper
 import com.juhnny.tpsmartplace.network.RetrofitService
 import retrofit2.Call
@@ -43,6 +45,8 @@ class MainActivity : AppCompatActivity() {
     //안드로이드에도 기본적으로 LocationManager가 있지만 좀 더 복잡하고 부정확하다고
     val providerClient : FusedLocationProviderClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
 
+    //3. 카카오 로컬 검색 응답 객체를 멤버로 만들자 - ListFragment, MapFragment 모두 이 정보를 사용하기에 부르기 쉽도록
+    var searchPlaceResponse : KakaoSearchPlaceResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,19 +147,29 @@ class MainActivity : AppCompatActivity() {
         //레트로핏을 이용하여 카카오 키워드 장소검색 API를 파싱하기
         val retrofit = RetrofitHelper.getRetrofitInstance("https://dapi.kakao.com")
         retrofit.create(RetrofitService::class.java)
-            .searchPlaceToString(searchQuery, mylocation?.latitude.toString(), mylocation?.longitude.toString())
-            .enqueue(object : Callback<String>{
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                val result:String? = response.body()
-                AlertDialog.Builder(this@MainActivity)
-                    .setMessage(result.toString())
-                    .show()
-            }
+            .searchPlace(searchQuery, mylocation?.latitude.toString(), mylocation?.longitude.toString())
+            .enqueue(object : Callback<KakaoSearchPlaceResponse>{
+                override fun onResponse(
+                    call: Call<KakaoSearchPlaceResponse>,
+                    response: Response<KakaoSearchPlaceResponse>
+                ) {
+                    searchPlaceResponse = response.body()
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Toast.makeText(this@MainActivity, "서버 오류가 있습니다.\n잠시 뒤에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
-            }
-        })
+                    val meta = searchPlaceResponse?.meta
+                    val documents = searchPlaceResponse?.documents
+                    Toast.makeText(this@MainActivity, "총 검색결과: ${meta?.total_count}, 한 장소: ${documents?.get(0)?.place_name}", Toast.LENGTH_SHORT).show()
+
+                    //새로 검색을 하면 PlaceListFragment에서 검색결과가 보여지도록(심지어 PlaceMapFragment를 보고 있어도)
+                    //기존 맵을 살려두고 adapter만 notify하는 것보다 크게 속도 퍼포먼스에서 차이나지 않을 것으로 판단
+                    supportFragmentManager.beginTransaction().replace(R.id.container_fragment, PlaceListFragment()).commit()
+                    //탭 버튼의 위치를 LIST 탭으로 변경
+                    b.layoutTab.getTabAt(0)?.select()
+                }
+
+                override fun onFailure(call: Call<KakaoSearchPlaceResponse>, t: Throwable) {
+                    Toast.makeText(this@MainActivity, "서버 오류가 있습니다.\n잠시 뒤에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
