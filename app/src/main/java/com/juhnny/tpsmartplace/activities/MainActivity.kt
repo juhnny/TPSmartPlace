@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     val quick by lazy { QuickListBinding.inflate(layoutInflater) }
 
     // 1. 검색 장소 키워드
-    var searchQuery:String = "화장실" //초기 검색어 - 내 주변 개방 화장실
+    var searchQuery:String = "화장실" //초기 검색어 - 내 주변 개방 화장실///
 
     // 2. 현재 내 위치 정보 객체(위도, 경도 정보를 멤버로 보유)
     var mylocation : Location? = null
