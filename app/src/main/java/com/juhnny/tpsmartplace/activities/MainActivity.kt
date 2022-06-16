@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(b.root)
-        b.progressCircular.visibility = View.VISIBLE
 
         //툴바를 제목줄로 설정
         setSupportActionBar(b.toolbar)
@@ -108,6 +107,7 @@ class MainActivity : AppCompatActivity() {
 
     //내 위치정보 얻어오는 기능 코드
     private fun requestMyLocation(){
+        b.progressCircular.visibility = View.VISIBLE
         //lastLocation()은 마지막에 썼던 좌표를 가져오기 때문에 실시간 위치정보 갱신을 요청
 
         //위치 요청에 대한 옵션을 설정하는 객체
@@ -125,7 +125,6 @@ class MainActivity : AppCompatActivity() {
         //위에서 만든 LocationRequest와 아래에서 만든 LocationCallback을 사용
         providerClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
         //permission을 처리해줘야만 사용 가능. 자동완성을 쓰면 위와 같이 나옴
-        b.progressCircular.visibility = View.GONE
 
     }
 
@@ -145,7 +144,7 @@ class MainActivity : AppCompatActivity() {
 
     //카카오 키워드 장소검색 API 수행하는 기능메소드
     private fun searchPlace(){
-        Toast.makeText(this, "$searchQuery, 내 위치: ${mylocation?.latitude}, ${mylocation?.longitude}", Toast.LENGTH_LONG).show()
+//        Toast.makeText(this, "$searchQuery, 내 위치: ${mylocation?.latitude}, ${mylocation?.longitude}", Toast.LENGTH_LONG).show()
 
         //레트로핏을 이용하여 카카오 키워드 장소검색 API를 파싱하기
         val retrofit = RetrofitHelper.getRetrofitInstance("https://dapi.kakao.com")
@@ -162,6 +161,7 @@ class MainActivity : AppCompatActivity() {
 //                    val documents = searchPlaceResponse?.documents
 //                    Toast.makeText(this@MainActivity, "총 검색결과: ${meta?.total_count}, 한 장소: ${documents?.get(0)?.place_name}", Toast.LENGTH_SHORT).show()
 
+                    b.progressCircular.visibility = View.GONE
                     //새로 검색을 하면 PlaceListFragment에서 검색결과가 보여지도록(심지어 PlaceMapFragment를 보고 있어도)
                     //기존 맵을 살려두고 adapter만 notify하는 것보다 크게 속도 퍼포먼스에서 차이나지 않을 것으로 판단
                     supportFragmentManager.beginTransaction().replace(R.id.container_fragment, PlaceListFragment()).commit()
